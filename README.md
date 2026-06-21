@@ -2,7 +2,7 @@
 
 > Fine-tuning `microsoft/deberta-v3-small` on the GLUE SST-2 benchmark for binary sentiment classification, achieving **94.7% validation accuracy** — matching RoBERTa-Base while using comparable compute, and outperforming BERT-Base (93.5%).
 
-📄 [Read the Paper](./Evaluating_the_Sufficiency_of_DeBERTa_V3_Small_for_Binary_Sentiment_Classification_on_the_SST_2_Benchmark.pdf) | 🧠 [Hugging Face Model Card](https://huggingface.co/microsoft/deberta-v3-small)
+📄 [Read the Paper](./https://github.com/KenOnoderazZz/deberta-sst2-sentiment/blob/main/Evaluating_the_Sufficiency_of_DeBERTa_V3_Small_for_Binary_Sentiment_Classification_on_the_SST_2_Benchmark.pdf) | 🧠 [Hugging Face Model Card](https://huggingface.co/microsoft/deberta-v3-small)
 
 ***
 
