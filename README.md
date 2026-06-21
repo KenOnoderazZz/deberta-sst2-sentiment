@@ -78,7 +78,7 @@ Loss Curves → Confusion Matrix → Baseline Comparison → Error Analysis
 
 ```bash
 # 1. Clone and install dependencies
-git clone https://github.com/YOUR_USERNAME/deberta-sst2-sentiment.git
+git clone https://github.com/KenOnoderazZz/deberta-sst2-sentiment.git
 cd deberta-sst2-sentiment
 pip install transformers datasets scikit-learn torch
 
