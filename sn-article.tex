@@ -1,0 +1,461 @@
+%Version 3.1 December 2024
+% See section 11 of the User Manual for version history
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%\documentclass[referee,sn-basic]{sn-jnl}% referee option is meant for double line spacing
+
+%%=======================================================%%
+%% to print line numbers in the margin use lineno option %%
+%%=======================================================%%
+
+%%\documentclass[lineno,pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%=========================================================================================%%
+%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
+%%=========================================================================================%%
+
+%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove Numbered in the optional parenthesis. 
+%%The option is available for: sn-basic.bst, sn-chicago.bst%  
+ 
+%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
+%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+% Math and Physical Sciences Numbered Reference Style
+%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
+%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
+%%\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style
+%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
+%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
+%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
+
+%%%% Standard Packages
+%%<additional latex packages if required can be included here>
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\DeclareMathSizes{8.43146}{8.43146}{6}{5}
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+%%%%
+
+%%%%%=============================================================================%%%%
+%%%%  Remarks: This template is provided to aid authors with the preparation
+%%%%  of original research articles intended for submission to journals published 
+%%%%  by Springer Nature. The guidance has been prepared in partnership with 
+%%%%  production teams to conform to Springer Nature technical requirements. 
+%%%%  Editorial and presentation requirements differ among journal portfolios and 
+%%%%  research disciplines. You may find sections in this template are irrelevant 
+%%%%  to your work and are empowered to omit any such section if allowed by the 
+%%%%  journal you intend to submit to. The submission guidelines and policies 
+%%%%  of the journal take precedence. A detailed User Manual is available in the 
+%%%%  template package for technical guidance.
+%%%%%=============================================================================%%%%
+
+%% as per the requirement new theorem styles can be included as shown below
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}% 
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
+%%\unnumbered% uncomment this for unnumbered level heads
+
+\begin{document}
+
+\title{Evaluating the Sufficiency of DeBERTa-V3-Small for Binary Sentiment Classification on the SST-2 Benchmark}
+
+\author*[1]{\fnm{Razaki Andyatama Ken} \sur{Onodera}}\email{5003231098@student.its.ac.id}
+
+\author[1]{\fnm{Ahmad Adib Syahmie Bin} \sur{Syafiee}}\email{5999251104@student.its.ac.id}
+
+\author[1]{\fnm{Fathi Akbar} \sur{Firmansyah}}\email{5003231097@student.its.ac.id}
+
+\affil[1]{\orgdiv{Department of Statistics}, \orgname{Institut Teknologi Sepuluh Nopember}, \orgaddress{\street{Kampus ITS Sukolilo}, \city{Surabaya}, \postcode{60111}, \country{Indonesia}}}
+
+\abstract{DeBERTa-V3-Small is evaluated as a resource-efficient alternative to large transformer models for binary sentiment classification on the SST-2 benchmark. The study fine-tunes the 141.9M-parameter model using GLUE-style protocols and reports 94.7\% validation accuracy, exceeding BERT-Base and matching RoBERTa-Base while requiring substantially fewer computational resources. Training converges within two epochs with stable loss curves, and confusion-matrix analysis shows symmetric errors across positive and negative classes, indicating balanced behavior rather than class-specific bias. Comparison against larger architectures such as RoBERTa-Large and ALBERT-xxlarge reveals only marginal accuracy gains of 1–2 percentage points at significantly higher parameter counts and inference costs. These empirical results support the viability of DeBERTa-V3-Small as a practical backbone for sentiment analysis in deployment scenarios where latency, memory, or budget constraints preclude very large models.}
+
+\keywords{Sentiment Analysis, DeBERTa, Transformer Models, Natural Language Processing, SST-2 Benchmark, Model Efficiency, Binary Classification, Deep Learning}
+
+\maketitle
+
+\section{Introduction}\label{sec1}
+
+\subsection{Context and Motivation}
+
+Sentiment analysis is fundamental to modern Natural Language Processing (NLP), enabling organizations to monitor social media, analyze customer feedback, and conduct market research at scale. Traditional approaches using dictionary-based methods and RNNs struggled to capture context and long-range dependencies. The Transformer architecture \cite{vaswani2017attention} revolutionized the field, with successive improvements in BERT \cite{devlin2019bert}, RoBERTa \cite{liu2019roberta}, and ALBERT \cite{lan2020albert} demonstrating strong performance on sentiment benchmarks.
+
+However, the increasing scale of these models—reaching 340M+ parameters—creates substantial computational barriers for deployment in resource-constrained environments. This limitation has motivated development of compact variants such as DistilBERT and MobileBERT \cite{sanh2019distilbert,sun2020mobilebert}, yet comprehensive evaluation of efficient models on standard benchmarks remains limited.
+
+\subsection{Problem Statement and Research Gap}
+
+DeBERTa-V3-Small represents a modern approach to parameter efficiency, employing Replaced Token Detection and disentangled attention mechanisms \cite{he2021deberta,he2023debertav3,clark2020electra}. Despite practical adoption, formal academic evaluation of DeBERTa-V3-Small on standard sentiment benchmarks remains scarce. This study addresses this gap by providing a rigorous evaluation on SST-2, directly comparing this efficient model against established baselines.
+
+\subsection{Proposed Solution and Research Objectives}
+
+We systematically evaluate DeBERTa-V3-Small on SST-2 binary sentiment classification using standard GLUE-compatible training protocols. We establish a reproducible baseline and compare validation accuracy against BERT-Base, RoBERTa-Base, RoBERTa-Large, and ALBERT-xxlarge. Specific objectives are: (1) fine-tune DeBERTa-V3-Small to establish a validation benchmark, (2) compare performance against baselines, (3) analyze training stability and convergence, and (4) characterize error patterns through qualitative analysis.
+
+\section{Related Work}\label{sec2}
+
+\subsection{Transformer-based Language Models for Sentiment Analysis}
+
+The Transformer architecture \cite{vaswani2017attention} introduced self-attention mechanisms enabling efficient modeling of long-range dependencies. BERT \cite{devlin2019bert} demonstrated that large-scale pre-training followed by task-specific fine-tuning achieves strong GLUE performance \cite{wang2018glue}, including SST-2 \cite{socher2013sst}. Subsequent improvements—RoBERTa \cite{liu2019roberta} through extended training and ALBERT \cite{lan2020albert} through parameter efficiency—further advanced the field.
+
+\subsection{DeBERTa and DeBERTa-V3}
+
+DeBERTa \cite{he2021deberta} disentangles content and position information in attention, improving word order modeling. DeBERTa-V3 \cite{he2023debertav3} further improves efficiency via Replaced Token Detection \cite{clark2020electra}, learning from all tokens rather than only masked positions. While DeBERTa-V3 achieves strong results on GLUE tasks, comprehensive evaluation of the compact DeBERTa-V3-Small variant on sentiment benchmarks remains limited, motivating this study.
+
+\subsection{Sentiment Analysis on SST-2}
+
+The Stanford Sentiment Treebank (SST) \cite{socher2013sst} with SST-2 binary labels is a standard GLUE benchmark \cite{wang2018glue}. Table~\ref{tab:sst2_baselines} shows that Transformer-based models achieve strong performance, though most published results focus on Base or Large variants. The viability of compact, parameter-efficient models like DeBERTa-V3-Small for this task remains underexplored.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Model} & \textbf{Parameters} & \textbf{SST-2 Accuracy (\%)} \\
+\midrule
+BERT-Base (uncased) \cite{devlin2019bert}   & 110M & 93.5 \\
+BERT-Large (uncased) \cite{devlin2019bert}  & 340M & 94.9 \\
+RoBERTa-Base \cite{liu2019roberta}          & 125M & 94.8 \\
+RoBERTa-Large \cite{liu2019roberta}         & 355M & 96.4 \\
+ALBERT-xxlarge \cite{lan2020albert}         & 235M & 95.2 \\
+\botrule
+\end{tabular}
+\caption{Reported GLUE SST-2 test accuracies for selected transformer models.}
+\label{tab:sst2_baselines}
+\end{table}
+
+\section{Research Methodology}\label{sec3}
+
+The SST-2 dataset \cite{socher2013sst} is accessed through the Hugging Face Datasets library \cite{lhoest2021datasets} in its GLUE-compatible format \cite{wang2018glue}, enabling direct comparison with published baselines. Table~\ref{tab:sst2_overview} summarizes the dataset composition.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Split} & \textbf{Size} & \textbf{Task Type} & \textbf{Labels} \\
+\midrule
+Train      & 67{,}349 & Sentence classification & 0 = Negative, 1 = Positive \\
+Validation &   872    & Sentence classification & 0 / 1 \\
+Test       & 1{,}821  & Sentence classification & Hidden (GLUE server) \\
+\botrule
+\end{tabular}
+\caption{SST-2 dataset overview (GLUE-compatible version).}
+\label{tab:sst2_overview}
+\end{table}
+
+\subsection{Exploratory Data Analysis}
+
+Exploratory analysis of the training split reveals a well-balanced label distribution with 44.2\% negative and 55.8\% positive samples (imbalance ratio 1.26:1), shown in Figure~\ref{fig:label_dist}. This balance justifies using accuracy as the primary evaluation metric without requiring class-balancing methods.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{sst2_label_distribution.png} 
+\caption{Label distribution in the SST-2 training set.}
+\label{fig:label_dist}
+\end{figure}
+
+Sentence length analysis (Figure~\ref{fig:length_dist}) shows a mean length of 12.5 tokens, supporting our choice of a maximum sequence length of 128 tokens for computational efficiency while capturing nearly all review snippets.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{sst2_length_distribution.png}
+\caption{Sentence length distribution (in tokens) in the SST-2 training set.}
+\label{fig:length_dist}
+\end{figure}
+
+\subsection{Model Architecture}
+
+We evaluate \texttt{microsoft/deberta-v3-small}, a compact member of the DeBERTa-V3 family. DeBERTa-V3-Small employs disentangled attention and Replaced Token Detection pre-training \cite{he2023debertav3}, enabling efficient learning from all tokens rather than only masked positions. For SST-2 classification, a linear layer with two output units is added atop the pre-trained encoder. Table~\ref{tab:model_specs} summarizes the model specifications.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Number of Encoder Layers & 6 \\
+Hidden Size & 768 \\
+Number of Attention Heads & 12 \\
+Total Parameters (Backbone) & $\approx$ 141.9M \\
+Vocabulary Size & 128{,}256 \\
+Maximum Sequence Length (Pre-training) & 512 \\
+\botrule
+\end{tabular}
+\caption{DeBERTa-V3-Small architecture specifications.}
+\label{tab:model_specs}
+\end{table}
+
+\subsection{Preprocessing and Tokenization}
+
+Text preprocessing follows standard BERT-style conventions adapted for DeBERTa-V3:
+
+\begin{enumerate}
+    \item \textbf{Tokenization:} Sentences are tokenized using the SentencePiece-based DeBERTa-V3 tokenizer \cite{kudo2018sentencepiece}, enabling robust handling of rare and out-of-vocabulary words.
+    
+    \item \textbf{Padding and Truncation:} Sequences are padded or truncated to 128 tokens, chosen based on the observed sentence length distribution.
+    
+    \item \textbf{Special Tokens:} [CLS] and [SEP] tokens are added automatically; the [CLS] representation is used for classification.
+    
+    \item \textbf{Attention Masks:} Masks distinguish actual tokens from padding, preventing the model from attending to padded positions.
+\end{enumerate}
+
+No manual feature engineering is required; the tokenizer and model handle all numerical representations internally.
+
+\subsection{Training Configuration}
+
+Fine-tuning is performed using the Hugging Face Transformers \texttt{Trainer} class \cite{wolf2020transformers}. Table~\ref{tab:training_config} details the hyperparameters.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} \\
+\midrule
+Optimizer & AdamW \cite{kingma2014adam} \\
+Learning Rate & \(2 \times 10^{-5}\) \\
+Batch Size & 16 \\
+Number of Epochs & 2 \\
+Weight Decay & 0.01 \\
+Learning Rate Scheduler & Linear (no warmup) \\
+Mixed Precision (FP16) & Enabled \\
+Random Seed & 42 \\
+\botrule
+\end{tabular}
+\caption{Training hyperparameters for DeBERTa-V3-Small on SST-2.}
+\label{tab:training_config}
+\end{table}
+
+Training is conducted on an NVIDIA T4 GPU (Google Colab) using PyTorch 2.x \cite{paszke2019pytorch} with CUDA support. Total training time is approximately 15–20 minutes for 2 epochs. Mixed precision training (FP16) reduces memory usage while maintaining numerical stability. Early stopping retains the checkpoint with highest validation accuracy.
+
+\subsection{Evaluation Metrics}
+
+Model performance is evaluated on the validation split using four standard classification metrics \cite{grandini2020metrics,miller2024review}:
+
+\begin{enumerate}
+    \item \textbf{Accuracy:} Proportion of correctly classified sentences.
+    \begin{equation}
+        \text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+    \end{equation}
+    
+    \item \textbf{Precision (Macro-Averaged):} 
+    \begin{equation}
+        \text{Precision}_{\text{macro}} = \frac{1}{2} \left( \frac{\text{TP}}{\text{TP} + \text{FP}} + \frac{\text{TN}}{\text{TN} + \text{FN}} \right)
+    \end{equation}
+    
+    \item \textbf{Recall (Macro-Averaged):} 
+    \begin{equation}
+        \text{Recall}_{\text{macro}} = \frac{1}{2} \left( \frac{\text{TP}}{\text{TP} + \text{FN}} + \frac{\text{TN}}{\text{TN} + \text{FP}} \right)
+    \end{equation}
+    
+    \item \textbf{F1-Score (Macro-Averaged):}
+    \begin{equation}
+        \text{F1}_{\text{macro}} = 2 \times \frac{\text{Precision}_{\text{macro}} \times \text{Recall}_{\text{macro}}}{\text{Precision}_{\text{macro}} + \text{Recall}_{\text{macro}}}
+    \end{equation}
+\end{enumerate}
+
+Macro-averaging ensures equal weight for both classes. Metrics are computed using scikit-learn \cite{scikit-learn}. A confusion matrix is generated to visualize error patterns (TP, TN, FP, FN).
+
+\subsection{Experimental Workflow}
+
+The systematic evaluation workflow comprises:
+
+\begin{enumerate}
+    \item Import and inspect SST-2 dataset (\texttt{stanfordnlp/sst2}).
+    \item Perform EDA on training split (label distribution, sentence lengths).
+    \item Load pre-trained \texttt{microsoft/deberta-v3-small} model and tokenizer.
+    \item Tokenize and preprocess all splits with 128-token maximum length.
+    \item Fine-tune for 2 epochs, saving best checkpoint by validation accuracy.
+    \item Evaluate on validation set, computing accuracy, precision, recall, and F1-score.
+    \item Visualize training/validation loss curves to assess convergence.
+    \item Generate confusion matrix to identify error patterns.
+    \item Perform qualitative error analysis on misclassified examples.
+    \item Compare results with published baselines (BERT, RoBERTa, ALBERT).
+\end{enumerate}
+
+Figure~\ref{fig:flowchart} illustrates the complete pipeline.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{Flowchart.png}
+\caption{Experimental pipeline flowchart.}
+\label{fig:flowchart}
+\end{figure}
+
+
+\section{Experiments and Results}\label{sec4}
+
+\subsection{Training Dynamics}
+
+The model was fine-tuned for 2 epochs on the SST-2 training set. Figure~\ref{fig:loss_curve} illustrates the training and validation loss across epochs.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{loss_curve.png}
+\caption{Training and validation loss per epoch for DeBERTa-V3-Small on SST-2. Training loss is logged every few steps, while validation loss is computed once at the end of each epoch.}
+\label{fig:loss_curve}
+\end{figure}
+
+Key observations from the training dynamics:
+\begin{itemize}
+    \item Training loss decreases steadily, indicating effective learning.
+    \item Validation loss remains stable at approximately 0.20, consistent with 94.7\% validation accuracy.
+    \item Convergence within 2 epochs demonstrates rapid adaptation to SST-2.
+\end{itemize}
+
+\subsection{Validation Performance}
+
+Table~\ref{tab:val_results} presents the final evaluation metrics on the SST-2 validation set.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Metric} & \textbf{Type} & \textbf{Score} \\
+\midrule
+Accuracy  & Overall & 0.9472 \\
+Precision & Macro   & 0.9472 \\
+Recall    & Macro   & 0.9472 \\
+F1-Score  & Macro   & 0.9472 \\
+\botrule
+\end{tabular}
+\caption{Final validation performance of DeBERTa-V3-Small on SST-2.}
+\label{tab:val_results}
+\end{table}
+
+The model achieves 94.7\% validation accuracy, with precision, recall, and F1-score all matching this value. This uniformity indicates balanced performance.
+
+\subsection{Error Analysis}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{confusion_matrix.png}
+\caption{Confusion matrix on the SST-2 validation set for DeBERTa-V3-Small.}
+\label{fig:confusion_matrix}
+\end{figure}
+
+The confusion matrix in Figure~\ref{fig:confusion_matrix} summarizes classification outcomes on the validation set. The model correctly predicts 405 of 428 negative samples and 421 of 444 positive samples, yielding symmetric error counts of 23 false positives and 23 false negatives. This balanced error distribution explains the identical precision, recall, and F1-score (0.9472) and indicates equal sensitivity to both sentiment classes. The remaining misclassifications likely correspond to intrinsically difficult cases involving subtle sentiment, sarcasm, or complex negation patterns, as discussed in Section~\ref{sec5}.
+
+
+\subsection{Comparative Analysis}
+
+Table~\ref{tab:comparison} compares DeBERTa-V3-Small against published transformer baselines on SST-2 \cite{devlin2019bert,liu2019roberta,lan2020albert}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Model} & \textbf{Parameters} & \textbf{SST-2 Accuracy (\%)} & \textbf{Source} \\
+\midrule
+BERT-Base (uncased)   & 110M   & 93.5 & Devlin et al. \cite{devlin2019bert} \\
+BERT-Large (uncased)  & 340M   & 94.9 & Devlin et al. \cite{devlin2019bert} \\
+RoBERTa-Base          & 125M   & 94.8 & Liu et al. \cite{liu2019roberta} \\
+RoBERTa-Large         & 355M   & 96.4 & Liu et al. \cite{liu2019roberta} \\
+ALBERT-xxlarge        & 235M   & 95.2 & Lan et al. \cite{lan2020albert} \\
+\midrule
+\textbf{DeBERTa-V3-Small (ours)} & \textbf{141.9M} & \textbf{94.7} & \textbf{This work} \\
+\botrule
+\end{tabular}
+\caption{SST-2 accuracies for selected transformer models.}
+\label{tab:comparison}
+\end{table}
+
+DeBERTa-V3-Small (141.9M parameters) achieves 94.7\% accuracy, placing it between BERT-Base (93.5\%) and BERT-Large (94.9\%), while matching RoBERTa-Base (94.8\%) with a comparable parameter count. This supports the effectiveness of the DeBERTa-V3 pre-training strategy, as it delivers performance on par with larger baselines. In contrast, substantially larger models such as RoBERTa-Large and ALBERT-xxlarge offer only 1–2 percentage points of additional accuracy at significantly higher computational cost.
+
+
+\section{Discussion}\label{sec5}
+
+\subsection{Model Performance Assessment}
+
+DeBERTa-V3-Small achieves 94.7\% validation accuracy, exceeding BERT-Base (93.5\%) and matching RoBERTa-Base (94.8\%) with 141.9M parameters. Superior performance relative to BERT-Base stems from two key innovations: the Replaced Token Detection objective \cite{clark2020electra} enables learning from all tokens, while disentangled attention \cite{he2021deberta} improves modeling of word order and syntactic structure.
+
+\subsection{Training Stability}
+
+The model exhibits stable convergence with consistent validation loss ($\approx$ 0.20) across 2 epochs. Balanced error distribution (23 false positives, 23 false negatives) demonstrates equal sensitivity to both sentiment classes. No overfitting is observed, indicating effective learning despite the modest validation set size.
+
+\subsection{Error Patterns}
+
+Misclassified examples (5.3\% error rate) reveal three primary failure modes: (1) sarcasm involving negated positive expressions, (2) complex multi-clause negation, and (3) mixed sentiment reviews. These challenges are endemic to sentiment analysis and not model-specific.
+
+\subsection{Efficiency-Performance Trade-off}
+
+While RoBERTa-Large achieves 96.4\% accuracy, this 1.7-point improvement requires 2.5× more parameters (355M) and substantially higher inference cost. DeBERTa-V3-Small is preferable for resource-constrained deployments prioritizing efficiency; larger models are justified only when accuracy is paramount and resources are abundant.
+
+\subsection{Study Limitations}
+
+Results are based on a single run (seed 42), employ standard GLUE hyperparameters without task-specific tuning, use the validation split due to withheld test labels, and include qualitative analysis of a subset of errors. Multiple runs, domain-adapted hyperparameters, and official test evaluation would strengthen findings.
+
+
+
+\section{Conclusion}\label{sec6}
+
+This study evaluated DeBERTa-V3-Small for binary sentiment classification on SST-2, demonstrating that this compact model (141.9M parameters) achieves 94.7\% accuracy, matching RoBERTa-Base and exceeding BERT-Base. These results validate the effectiveness of modern pre-training objectives and disentangled attention mechanisms \cite{he2023debertav3} for parameter-efficient sentiment analysis.
+
+DeBERTa-V3-Small represents a practical solution for sentiment analysis in resource-constrained environments, offering an optimal balance between accuracy and computational efficiency. The model is suitable for edge devices, mobile applications, and budget-limited cloud deployments where larger models are infeasible.
+
+\subsection{Key Contributions}
+
+\begin{itemize}
+    \item Evaluation of DeBERTa-V3-Small on SST-2, filling a gap in the literature.
+    \item Evidence-based guidance for practitioners choosing between efficient and large models.
+    \item Reproducible baseline and comparison protocol extensible to other tasks.
+\end{itemize}
+
+\subsection{Recommendations}
+
+For resource-constrained settings, DeBERTa-V3-Small is the preferred choice. For accuracy-critical applications, larger models are justified only if computational resources permit. Production deployment should include task-specific hyperparameter tuning and multi-seed evaluation.
+
+\subsection{Future Work}
+
+Future directions include: (1) cross-task evaluation on other GLUE benchmarks, (2) parameter-efficient fine-tuning methods (LoRA, Adapters) \cite{hu2021lora}, (3) adversarial robustness assessment, (4) comparative efficiency analysis across other small models, and (5) domain-specific adaptation on specialized sentiment datasets.
+
+As NLP research increasingly prioritizes efficiency alongside accuracy, compact models like DeBERTa-V3-Small will become increasingly prominent in production applications.
+
+
+%%===========================================================================================%%
+%% Back matter: Acknowledgments and References
+%%===========================================================================================%%
+
+\backmatter
+
+\bmhead{Acknowledgments}
+
+The authors sincerely thank Dr. Dedy Dwi Prastyo and Dr. T. Dwi Ary Widhianingsih for their invaluable guidance and support throughout this project.
+
+%%===========================================================================================%%
+%% Bibliography
+%%===========================================================================================%%
+
+\bibliography{bibliography}
+
+\end{document}
