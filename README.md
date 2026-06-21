@@ -124,18 +124,3 @@ These failure modes are endemic to sentiment classification, not model-specific.
 - **Authors:** Razaki Andyatama Ken Onodera, Ahmad Adib Syahmie, Fathi Akbar Firmansyah
 - **Supervisors:** Dr. Dedy Dwi Prastyo, Dr. T. Dwi Ary Widhianingsih
 
-***
-
-## Tech Stack
-
-
-
-
-
-
-
-***
-
-## License
-
-MIT License — see [LICENSE](LICENSE) for details.
